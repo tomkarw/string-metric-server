@@ -62,15 +62,18 @@ struct DistanceResponse {
     string1: String,
     string2: String,
     hamming_distance: usize,
+    levenshtein_distance: usize,
 }
 
 impl DistanceResponse {
     fn new(string1: String, string2: String) -> Self {
         let hamming_distance = metrics::hamming_distance(&string1, &string2);
+        let levenshtein_distance = metrics::levenshtein_distance(&string1, &string2);
         DistanceResponse {
             string1,
             string2,
             hamming_distance,
+            levenshtein_distance,
         }
     }
 }

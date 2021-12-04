@@ -13,7 +13,7 @@ ws.onopen = function() {
 
 ws.onmessage = function(msg) {
     const line = document.createElement('p');
-    const data = JSON.parse(JSON.parse(msg.data)); // TODO: temporary fix, we send double-serialized json
+    const data = JSON.parse(msg.data);
     console.log(data);
     line.innerText = `string1: ${data["string1"]}, string2: ${data["string2"]}`;
     chat.appendChild(line);

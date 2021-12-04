@@ -8,6 +8,8 @@ use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 use warp::ws::{Message, WebSocket};
 
+use crate::metrics;
+
 pub type Connections = Arc<RwLock<HashMap<usize, mpsc::UnboundedSender<Message>>>>;
 
 static NEXT_USER_ID: AtomicUsize = AtomicUsize::new(1);
@@ -59,11 +61,17 @@ struct DistanceRequest {
 struct DistanceResponse {
     string1: String,
     string2: String,
+    hamming_distance: usize,
 }
 
 impl DistanceResponse {
     fn new(string1: String, string2: String) -> Self {
-        DistanceResponse { string1, string2 }
+        let hamming_distance = metrics::hamming_distance(&string1, &string2);
+        DistanceResponse {
+            string1,
+            string2,
+            hamming_distance,
+        }
     }
 }
 

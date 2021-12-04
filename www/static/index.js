@@ -15,7 +15,9 @@ ws.onmessage = function(msg) {
     const line = document.createElement('p');
     const data = JSON.parse(msg.data);
     console.log(data);
-    line.innerText = `string1: ${data["string1"]}, string2: ${data["string2"]}`;
+    for (const key in data) {
+        line.innerText += `${key}: ${data[key]} `;
+    }
     chat.appendChild(line);
 };
 

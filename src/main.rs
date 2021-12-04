@@ -1,7 +1,6 @@
 use warp::Filter;
 
-mod server;
-use server::{user_connected, Connections};
+use string_metric_server::server::{user_connected, Connections};
 
 #[tokio::main]
 async fn main() {

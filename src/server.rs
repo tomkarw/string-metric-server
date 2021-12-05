@@ -61,8 +61,8 @@ struct DistanceRequest {
 struct DistanceResponse {
     string1: String,
     string2: String,
-    hamming_distance: usize,
-    levenshtein_distance: usize,
+    hamming_distance: f64,
+    levenshtein_distance: f64,
     jaro_distance: f64,
 }
 

@@ -1,26 +1,27 @@
 use std::cmp;
 
 /// https://en.wikipedia.org/wiki/Hamming_distance
-pub fn hamming_distance(str1: &str, str2: &str) -> usize {
-    let size_diff = if str1.len() > str2.len() {
-        str1.len() - str2.len()
+pub fn hamming_distance(str1: &str, str2: &str) -> f64 {
+    let (size_diff, max_size) = if str1.len() > str2.len() {
+        (str1.len() - str2.len(), str1.len())
     } else {
-        str2.len() - str1.len()
+        (str2.len() - str1.len(), str2.len())
     };
     let match_diff = str1
         .chars()
         .zip(str2.chars())
         .filter(|(c1, c2)| c1 != c2)
         .count();
-    size_diff + match_diff
+    (size_diff + match_diff) as f64 / max_size as f64
 }
 
 /// https://en.wikipedia.org/wiki/Levenshtein_distance
-pub fn levenshtein_distance(str1: &str, str2: &str) -> usize {
+pub fn levenshtein_distance(str1: &str, str2: &str) -> f64 {
     levenshtein_distance_inner(
         &str1.chars().collect::<Vec<_>>(),
         &str2.chars().collect::<Vec<_>>(),
-    )
+    ) as f64
+        / cmp::max(str1.len(), str2.len()) as f64
 }
 
 // TODO: possible to use memoization?

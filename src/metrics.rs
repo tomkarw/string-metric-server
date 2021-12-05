@@ -1,4 +1,5 @@
 use std::cmp;
+use std::collections::HashMap;
 
 /// Calculate Hamming distance
 /// https://en.wikipedia.org/wiki/Hamming_distance
@@ -19,28 +20,64 @@ pub fn hamming_distance(str1: &str, str2: &str) -> f64 {
 /// Calculate Levenshtein distance
 /// https://en.wikipedia.org/wiki/Levenshtein_distance
 pub fn levenshtein_distance(str1: &str, str2: &str) -> f64 {
-    levenshtein_distance_inner(
+    levenshtein_distance_with_memo(
         &str1.chars().collect::<Vec<_>>(),
         &str2.chars().collect::<Vec<_>>(),
+        &mut HashMap::new(),
     ) as f64
         / cmp::max(str1.len(), str2.len()) as f64
 }
 
-// TODO: possible to use memoization?
-fn levenshtein_distance_inner(str1: &[char], str2: &[char]) -> usize {
+// TODO: benchmark implementations with and without memoization
+// fn levenshtein_distance_inner(str1: &[char], str2: &[char]) -> usize {
+//     match (str1.first(), str2.first()) {
+//         (_, None) => str1.len(),
+//         (None, _) => str2.len(),
+//         (c1, c2) if c1 == c2 => levenshtein_distance_inner(&str1[1..], &str2[1..]),
+//         (_, _) => {
+//             1 + cmp::min(
+//                 levenshtein_distance_inner(&str1[1..], str2),
+//                 cmp::min(
+//                     levenshtein_distance_inner(str1, &str2[1..]),
+//                     levenshtein_distance_inner(&str1[1..], &str2[1..]),
+//                 ),
+//             )
+//         }
+//     }
+// }
+
+fn levenshtein_distance_with_memo<'a>(
+    str1: &'a [char],
+    str2: &'a [char],
+    memo: &mut HashMap<(&'a [char], &'a [char]), usize>,
+) -> usize {
     match (str1.first(), str2.first()) {
         (_, None) => str1.len(),
         (None, _) => str2.len(),
-        (c1, c2) if c1 == c2 => levenshtein_distance_inner(&str1[1..], &str2[1..]),
+        (c1, c2) if c1 == c2 => levenshtein_get_or_calculate(&str1[1..], &str2[1..], memo),
         (_, _) => {
             1 + cmp::min(
-                levenshtein_distance_inner(&str1[1..], str2),
+                levenshtein_get_or_calculate(&str1[1..], str2, memo),
                 cmp::min(
-                    levenshtein_distance_inner(str1, &str2[1..]),
-                    levenshtein_distance_inner(&str1[1..], &str2[1..]),
+                    levenshtein_get_or_calculate(str1, &str2[1..], memo),
+                    levenshtein_get_or_calculate(&str1[1..], &str2[1..], memo),
                 ),
             )
         }
+    }
+}
+
+fn levenshtein_get_or_calculate<'a>(
+    str1: &'a [char],
+    str2: &'a [char],
+    memo: &mut HashMap<(&'a [char], &'a [char]), usize>,
+) -> usize {
+    if let Some(distance) = memo.get(&(str1, str2)) {
+        *distance
+    } else {
+        let distance = levenshtein_distance_with_memo(str1, str2, memo);
+        memo.insert((str1, str2), distance);
+        distance
     }
 }
 

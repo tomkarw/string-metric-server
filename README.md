@@ -5,7 +5,7 @@ It runs a static site that upgrades to websocket connection and allows to input 
 All connected users will receive the result of the query.
 
 Currently, implemented metrics are:
-* [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance)
+* [Hamming distance](https://en.wikipedia.org/wiki/Hamming_distance) (extended to handle strings of different length)
 * [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance)
 * [Jaro distance](https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance) (technically not a metric)
 

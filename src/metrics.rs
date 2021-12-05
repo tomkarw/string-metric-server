@@ -102,3 +102,58 @@ pub fn jaro_distance(str1: &str, str2: &str) -> f64 {
         as f64
         / 3.0
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hamming_distance_simple() {
+        assert_eq!(hamming_distance("karolin", "kathrin"), 3.0 / 7.0);
+    }
+
+    #[test]
+    fn test_hamming_distance_max_difference() {
+        assert_eq!(hamming_distance("0000", "1111"), 1.0);
+    }
+
+    #[test]
+    fn test_hamming_distance_different_length() {
+        assert_eq!(hamming_distance("ala", "axxa"), 3.0 / 4.0);
+    }
+
+    #[test]
+    fn test_levenshtein_distance_simple() {
+        assert_eq!(levenshtein_distance("kitten", "sitting"), 3.0 / 7.0);
+    }
+
+    #[test]
+    fn test_levenshtein_distance_max_difference() {
+        assert_eq!(levenshtein_distance("0000", "1111"), 1.0);
+    }
+
+    #[test]
+    fn test_levenshtein_distance_different_length() {
+        assert_eq!(levenshtein_distance("ala", "axxa"), 2.0 / 4.0);
+    }
+
+    #[test]
+    fn test_jaro_distance_simple() {
+        assert_eq!(jaro_distance("crate", "trace"), 0.2666666666666666);
+    }
+
+    #[test]
+    fn test_jaro_distance_max_difference() {
+        assert_eq!(jaro_distance("0000", "1111"), 1.0);
+    }
+
+    #[test]
+    fn test_jaro_distance_another_simple() {
+        assert_eq!(jaro_distance("arnab", "raanb"), 0.1333333333333333);
+    }
+
+    #[test]
+    fn test_jaro_distance_different_length() {
+        assert_eq!(jaro_distance("ala", "axxa"), 0.2777777777777778);
+    }
+}

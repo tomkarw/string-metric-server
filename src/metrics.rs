@@ -1,5 +1,6 @@
 use std::cmp;
 
+/// Calculate Hamming distance
 /// https://en.wikipedia.org/wiki/Hamming_distance
 pub fn hamming_distance(str1: &str, str2: &str) -> f64 {
     let (size_diff, max_size) = if str1.len() > str2.len() {
@@ -15,6 +16,7 @@ pub fn hamming_distance(str1: &str, str2: &str) -> f64 {
     (size_diff + match_diff) as f64 / max_size as f64
 }
 
+/// Calculate Levenshtein distance
 /// https://en.wikipedia.org/wiki/Levenshtein_distance
 pub fn levenshtein_distance(str1: &str, str2: &str) -> f64 {
     levenshtein_distance_inner(
@@ -42,6 +44,7 @@ fn levenshtein_distance_inner(str1: &[char], str2: &[char]) -> usize {
     }
 }
 
+/// Calculate Jaro distance
 /// https://en.wikipedia.org/wiki/Jaro%E2%80%93Winkler_distance
 /// source: https://www.geeksforgeeks.org/jaro-and-jaro-winkler-similarity/
 pub fn jaro_distance(str1: &str, str2: &str) -> f64 {

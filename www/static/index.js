@@ -36,3 +36,7 @@ send.onclick = function() {
     string1.value = '';
     string2.value = '';
 };
+
+window.onbeforeunload = () => {
+    ws.close();
+}

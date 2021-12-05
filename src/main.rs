@@ -1,3 +1,5 @@
+use std::env;
+
 use warp::Filter;
 
 use string_metric_server::server::{user_connected, Connections};
@@ -27,5 +29,10 @@ async fn main() {
 
     let routes = index.or(favicon).or(statics).or(string_metric);
 
-    warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
+    let port = match env::args().skip(1).next() {
+        Some(s) => s.parse::<u16>().unwrap(),
+        None => 80,
+    };
+
+    warp::serve(routes).run(([127, 0, 0, 1], port)).await;
 }

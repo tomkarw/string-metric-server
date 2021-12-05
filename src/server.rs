@@ -44,7 +44,7 @@ pub async fn user_connected(ws: WebSocket, connections: Connections) {
             }
         };
 
-        user_message(msg, &connections).await;
+        user_message(id, msg, &connections).await;
     }
 
     eprintln!("user disconnected: {}", id);
@@ -81,22 +81,40 @@ impl DistanceResponse {
     }
 }
 
-async fn user_message(msg: Message, connections: &Connections) {
+#[derive(Serialize)]
+struct ErrorResponse {
+    error: String,
+}
+
+impl ErrorResponse {
+    fn new(error: String) -> Self {
+        ErrorResponse { error }
+    }
+}
+
+async fn user_message(id: usize, msg: Message, connections: &Connections) {
     if let Ok(msg) = msg.to_str() {
-        let distance_request =
-            serde_json::from_str::<DistanceRequest>(msg).expect("failed to deserialize request");
+        match serde_json::from_str::<DistanceRequest>(msg) {
+            Ok(distance_request) => {
+                let distance_response =
+                    DistanceResponse::new(distance_request.string1, distance_request.string2);
 
-        // TODO: calculate the distance
-        let distance_response =
-            DistanceResponse::new(distance_request.string1, distance_request.string2);
+                let response = serde_json::to_string(&distance_response)
+                    .expect("failed to serialize response");
 
-        let response =
-            serde_json::to_string(&distance_response).expect("failed to serialize response");
-
-        for (_, tx) in connections.read().await.iter() {
-            // Ok - do nothing
-            // Err - tunnel was closed and is being removed from the connections dictionary
-            let _ = tx.send(Message::text(response.clone()));
+                for (_, tx) in connections.read().await.iter() {
+                    // Ok - do nothing
+                    // Err - tunnel was closed and is being removed from the connections dictionary
+                    let _ = tx.send(Message::text(response.clone()));
+                }
+            }
+            Err(e) => {
+                if let Some(tx) = connections.read().await.get(&id) {
+                    let response = serde_json::to_string(&ErrorResponse::new(e.to_string()))
+                        .expect("failed to serialize error response");
+                    let _ = tx.send(Message::text(response));
+                }
+            }
         }
     }
 }

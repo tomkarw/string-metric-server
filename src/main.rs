@@ -29,9 +29,9 @@ async fn main() {
 
     let routes = index.or(favicon).or(statics).or(string_metric);
 
-    let port = match env::args().skip(1).next() {
+    let port = match env::args().nth(1) {
         Some(s) => s.parse::<u16>().unwrap(),
-        None => 80,
+        None => 8080,
     };
 
     warp::serve(routes).run(([127, 0, 0, 1], port)).await;
